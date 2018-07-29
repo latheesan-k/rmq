@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/adjust/uniuri"
-	"gopkg.in/redis.v3"
 )
 
 const heartbeatDuration = time.Minute
@@ -58,6 +57,17 @@ func OpenConnection(tag, network, address string, db int) *redisConnection {
 		Network: network,
 		Addr:    address,
 		DB:      int64(db),
+	})
+	return OpenConnectionWithRedisClient(tag, redisClient)
+}
+
+// OpenConnection opens (with authentication) and returns a new connection
+func OpenConnection(tag, network, address string, db int, password string) *redisConnection {
+	redisClient := redis.NewClient(&redis.Options{
+		Network:  network,
+		Addr:     address,
+		DB:       int64(db),
+		Password: password,
 	})
 	return OpenConnectionWithRedisClient(tag, redisClient)
 }
